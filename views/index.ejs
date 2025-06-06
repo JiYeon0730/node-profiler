@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Profiler 결과 시각화</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<h1>📂 inputFile.txt 업로드</h1>
+<form action="/upload" method="POST" enctype="multipart/form-data">
+  <input type="file" name="profilerFile" accept=".txt" required />
+  <button type="submit">업로드 및 분석</button>
+</form>
+
+<hr>
+
+  <h2>📊 Core별 평균 그래프</h2>
+  <canvas id="coreChart" width="600" height="300"></canvas>
+
+  <h2>📊 Task별 평균 그래프</h2>
+  <canvas id="taskChart" width="600" height="300"></canvas>
+
+  <script>
+    const coreStats = <%- JSON.stringify(coreStats) %>;
+    const taskStats = <%- JSON.stringify(taskStats) %>;
+
+    const coreLabels = Object.keys(coreStats);
+    const coreData = coreLabels.map(k => coreStats[k].avg);
+
+    const taskLabels = Object.keys(taskStats);
+    const taskData = taskLabels.map(k => taskStats[k].avg);
+
+    const ctx1 = document.getElementById('coreChart').getContext('2d');
+    new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: coreLabels,
+        datasets: [{
+          label: 'Core 평균',
+          data: coreData,
+        }]
+      }
+    });
+
+    const ctx2 = document.getElementById('taskChart').getContext('2d');
+    new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: taskLabels,
+        datasets: [{
+          label: 'Task 평균',
+          data: taskData,
+        }]
+      }
+    });
+  </script>
+</body>
+</html>
